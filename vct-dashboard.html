@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VConnecTech — Operating View</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F6F3; --surface:#FFF; --ink:#15181C; --muted:#6E747D;
+  --rule:#E4E4DE; --rule2:#CBCBC3; --sel:#2F3A63; --selsoft:#ECEFF7;
+  --billed:#1C7A57; --bbilled:#6C9440; --buffer:#C08618; --unbilled:#B04A3E; --none:#9AA0A8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.num{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--rule);padding:13px 24px 0}
+.hd{max-width:1280px;margin:0 auto}
+@media(max-width:600px){header.top{padding:12px 15px 0}}
+.brand{display:flex;align-items:baseline;gap:9px;margin-bottom:9px}
+.brand h1{font-size:18px;font-weight:600;margin:0;letter-spacing:-.01em}
+.brand span{font-size:12px;color:var(--muted)}
+nav.rail{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+nav.rail::-webkit-scrollbar{display:none}
+nav.rail button{flex:0 0 auto;background:none;border:0;border-bottom:2px solid transparent;
+  padding:8px 10px 9px;font:inherit;font-size:13.5px;color:var(--muted);cursor:pointer;white-space:nowrap}
+nav.rail button:hover{color:var(--ink)}
+nav.rail button[aria-current="true"]{color:var(--ink);font-weight:600;border-bottom-color:var(--sel)}
+nav.rail button:focus-visible{outline:2px solid var(--sel);outline-offset:-2px;border-radius:3px}
+main{padding:22px 24px 80px;max-width:1280px;margin:0 auto}
+@media(max-width:600px){main{padding:18px 15px 72px}}
+
+h2.view{font-size:27px;font-weight:600;margin:0 0 3px;letter-spacing:-.018em}
+h3{font-size:16px;font-weight:600;margin:34px 0 4px;letter-spacing:-.005em}
+p.lede{color:var(--muted);font-size:14.5px;margin:0 0 20px;max-width:70ch}
+p.sub{color:var(--muted);font-size:12.5px;margin:0 0 10px}
+
+/* headline stats */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--rule);
+  border:1px solid var(--rule);border-radius:7px;overflow:hidden;margin-bottom:18px}
+.stat{background:var(--surface);padding:17px 18px}
+.stat .v{font-size:34px;font-weight:500;letter-spacing:-.03em;line-height:1.1}
+.stat .l{font-size:12.5px;color:var(--muted);margin-top:2px}
+@media(min-width:620px){.stats{grid-template-columns:repeat(4,1fr)}}
+.two{display:grid;gap:14px}@media(min-width:900px){.two{grid-template-columns:1fr 1.35fr;align-items:start}}
+
+/* donut */
+.donut{display:flex;align-items:center;gap:22px;background:var(--surface);
+  border:1px solid var(--rule);border-radius:9px;padding:20px;height:100%}
+.donut svg{flex:0 0 148px}
+.key{display:flex;flex-direction:column;gap:6px;font-size:13px;min-width:0}
+.key div{display:flex;align-items:center;gap:7px}
+.key i{width:9px;height:9px;border-radius:2px;flex:0 0 auto}
+.key b{font-weight:500;margin-left:auto;padding-left:10px}
+
+/* horizontal bars */
+.hbars{background:var(--surface);border:1px solid var(--rule);border-radius:9px;padding:18px;height:100%}
+.hrow{margin-bottom:14px}
+.hrow:last-child{margin-bottom:0}
+.hlab{display:flex;justify-content:space-between;font-size:14px;margin-bottom:4px;gap:10px}
+.hlab span:last-child{color:var(--muted);font-size:12px;white-space:nowrap}
+.htrack{height:11px;border-radius:99px;background:#EDEDE8;overflow:hidden;display:flex}
+.htrack i{display:block;height:100%}
+.hrow.click{cursor:pointer}
+.hrow.click:hover .hlab span:first-child{color:var(--sel)}
+
+/* pyramid */
+.pyr{background:var(--surface);border:1px solid var(--rule);border-radius:9px;padding:18px}
+.pyrow{display:flex;align-items:center;gap:11px;margin-bottom:7px;font-size:14px}
+.pyrow:last-child{margin-bottom:0}
+.pyrow .lv{width:22px;font-weight:500}
+.pyrow .b{height:19px;border-radius:2px;background:var(--sel);opacity:.82;min-width:2px}
+.pyrow .n{color:var(--muted);font-size:12px}
+.pyrow .yr{color:var(--rule2);font-size:11.5px;margin-left:auto;white-space:nowrap}
+
+/* alerts */
+.alert{background:var(--surface);border:1px solid var(--rule);border-left:4px solid var(--buffer);
+  border-radius:5px;padding:11px 13px;margin-bottom:7px}
+.alert.hot{border-left-color:var(--unbilled)}
+.alert.calm{border-left-color:var(--none)}
+.alert b{display:block;font-size:13.5px;font-weight:600;margin-bottom:2px}
+.alert p{margin:0;font-size:12.5px;color:var(--muted)}
+
+/* cards */
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:9px;padding:16px 17px;
+  margin-bottom:7px;width:100%;text-align:left;font:inherit;color:inherit;display:block;cursor:pointer}
+.card:hover{border-color:var(--rule2)}
+.card:focus-visible{outline:2px solid var(--sel);outline-offset:1px}
+.ctop{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.cname{font-weight:600;font-size:16px;letter-spacing:-.01em}
+.ccount{font-size:24px;font-weight:500}
+.csub{color:var(--muted);font-size:12.5px;margin-top:2px}
+.bar{display:flex;height:7px;border-radius:99px;overflow:hidden;background:#EDEDE8;margin-top:9px}
+.bar i{display:block;height:100%}
+@media(min-width:620px){.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.grid .card{margin-bottom:0}}
+@media(min-width:1000px){.grid{grid-template-columns:repeat(3,1fr)}}
+.alerts{display:grid;gap:8px}@media(min-width:900px){.alerts{grid-template-columns:1fr 1fr}}
+
+/* matrix */
+.mwrap{overflow-x:auto;border:1px solid var(--rule);border-radius:7px;background:var(--surface)}
+table.mx{border-collapse:collapse;font-size:13.5px;min-width:100%}
+table.mx th,table.mx td{padding:9px 13px;text-align:center;white-space:nowrap;border-bottom:1px solid var(--rule)}
+table.mx thead th{font-weight:500;color:var(--muted);font-size:11.5px;position:sticky;top:0;background:var(--surface)}
+table.mx th.rh{text-align:left;position:sticky;left:0;background:var(--surface);font-weight:500;
+  border-right:1px solid var(--rule);z-index:1}
+table.mx tbody tr:last-child td,table.mx tbody tr:last-child th{border-bottom:0}
+table.mx td.z{color:#DCDCD5}
+table.mx tfoot td,table.mx tfoot th{font-weight:600;border-top:1px solid var(--rule2);border-bottom:0}
+
+table.list{width:100%;border-collapse:collapse;font-size:14px}
+table.list th{text-align:left;font-weight:500;color:var(--muted);font-size:12px;padding:0 8px 6px 0;border-bottom:1px solid var(--rule)}
+table.list td{padding:7px 8px 7px 0;border-bottom:1px solid var(--rule)}
+table.list .r{text-align:right;padding-right:0}
+
+.back{background:none;border:0;padding:0 0 12px;font:inherit;font-size:13px;color:var(--sel);cursor:pointer}
+.note{font-size:12.5px;color:var(--muted);margin-top:22px;padding-top:12px;border-top:1px solid var(--rule)}
+.empty{border:1px dashed var(--rule2);border-radius:7px;padding:16px;background:var(--surface);color:var(--muted);font-size:13.5px}
+.empty b{color:var(--ink);display:block;margin-bottom:4px;font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+.chip{font-size:11.5px;color:var(--muted);border:1px solid var(--rule);border-radius:99px;padding:1px 8px;background:var(--bg)}
+.load{background:var(--surface);border:1px solid var(--rule);border-radius:9px;padding:16px;margin-top:26px}
+.load textarea{width:100%;height:92px;font-family:"IBM Plex Mono",monospace;font-size:11.5px;
+  border:1px solid var(--rule);border-radius:6px;padding:9px;resize:vertical;background:var(--bg);color:var(--ink)}
+.load button{margin-top:9px;background:var(--sel);color:#fff;border:0;border-radius:6px;
+  padding:9px 17px;font:inherit;font-size:14px;font-weight:500;cursor:pointer}
+.load button:hover{opacity:.9}
+.load .msg{font-size:13px;margin-top:9px;color:var(--muted)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hd"><div class="brand"><h1>VConnecTech</h1><span>Operating view</span></div>
+  <nav class="rail" id="rail" aria-label="Sections"></nav></div>
+</header>
+<main id="main"></main>
+
+<script>
+const DATA = {"people":[{"id":"VC_221","name":"A.V.S.Padma Sri","lead":"Srikanth","domain":"DV","designation":"Engineer I","yoe":0.83,"level":"L0","role":"Engineer"},{"id":"VC_105","name":"AV Rajesh","lead":"Srikanth","domain":"Hardware","designation":"Director","yoe":24.0,"level":"L5","role":"Director"},{"id":"VC_203","name":"Aadesh Gonda","lead":"Srikanth","domain":"DV","designation":"Engineer I","yoe":3.33,"level":"L2","role":"Engineer"},{"id":"VC_158","name":"Aadhi Seshulu","lead":"Mounika","domain":"UI Designer","designation":"UI Designer","yoe":null,"level":null,"role":"Support"},{"id":"VC_177","name":"Abhishek Begari","lead":"Srikanth","domain":"Technical Writer","designation":"Technical Writer","yoe":4.11,"level":"L2","role":"Support"},{"id":"VC_116","name":"Abhishek Vulapu","lead":"Srikanth","domain":"Program Manager","designation":"Program Manager","yoe":14.0,"level":"L5","role":"Program Manager"},{"id":"VC_195","name":"Ajay Sirigiri","lead":"Sudha","domain":"Finance Associate (Accounts)","designation":"Finance Associate (Accounts)","yoe":null,"level":null,"role":"Support"},{"id":"VC_164","name":"Akash R","lead":"Teja","domain":"Embedded - Validation","designation":"Engineer I","yoe":2.17,"level":"L1","role":"Engineer"},{"id":"VC_152","name":"Akhila Reddy Addula","lead":"Teja","domain":"Embedded - S/W","designation":"Senior Engineer","yoe":7.08,"level":"L4","role":"Senior Engineer"},{"id":"VC_247","name":"Ambika Vallandas","lead":"Sasikanth","domain":"Embedded - S/W","designation":"Senior Engineer","yoe":14.08,"level":"L5","role":"Senior Engineer"},{"id":"VC_223","name":"Anasuri durgabhavani","lead":"Srikanth","domain":"DV","designation":"Engineer I","yoe":0.75,"level":"L0","role":"Engineer"},{"id":"VC_211","name":"Ankit Vishwakarma","lead":"On Site","domain":"Not specified","designation":"Senior Engineer","yoe":null,"level":null,"role":"Senior Engineer"},{"id":"VC_104","name":"Aravind Kumar Goud Kurra","lead":"Srikanth","domain":"SystemC Modelling","designation":"Staff Engineer","yoe":8.0,"level":"L4","role":"Staff Engineer"},{"id":"VC_208","name":"Arepu Naga Sai Nikhitha","lead":"Kameswara rao","domain":"Embedded - Validation","designation":"Engineer I","yoe":1.0,"level":"L1","role":"Engineer"},{"id":"VCIN_52","name":"Attuluri Venkat Dhanush","lead":"Sudha","domain":"Application Software","designation":"Intern","yoe":null,"level":null,"role":"Intern"},{"id":"VC_212","name":"Balachandra Anguru","lead":"Srikanth","domain":"DV","designation":"Engineer II","yoe":4.92,"level":"L2","role":"Engineer"},{"id":"VC_187","name":"Bali Harsha Vardhan","lead":"Shyam","domain":"Embedded - Linux","designation":"Engineer I","yoe":1.33,"level":"L1","role":"Engineer"},{"id":"VC_217","name":"Balijepalli Anil Kumar","lead":"Aravind","domain":"SystemC Modelling","designation":"Engineer I","yoe":0.58,"level":"L0","role":"Engineer"},{"id":"VC_178","name":"Battula Venu Madhav","lead":"Shyam","domain":"Embedded - Validation","designation":"Engineer I","yoe":1.33,"level":"L1","role":"Engineer"},{"id":"VC_123","name":"Bhimineni.Pravallika","lead":"Srikanth","domain":"Embedded - S/W","designation":"Engineer II","yoe":2.5,"level":"L1","role":"Engineer"},{"id":"VC_229","name":"Bommi Sandhya","lead":"Rajesh","domain":"Hardware","designation":"Engineer I","yoe":0.83,"level":"L0","role":"Engineer"},{"id":"VC_227","name":"Borusu Bala Satya Phaneendra","lead":"Srikanth","domain":"FPGA","designation":"Engineer I","yoe":0.92,"level":"L0","role":"Engineer"},{"id":"VC_119","name":"Buneboyina.Pavan Kalyan","lead":"Sasikanth","domain":"Embedded - Linux","designation":"Engineer II","yoe":2.5,"level":"L1","role":"Engineer"},{"id":"VC_168","name":"Chandrika K","lead":"Kameswara rao","domain":"Embedded - S/W","designation":"Engineer I","yoe":2.17,"level":"L1","role":"Engineer"},{"id":"VCC_115","name":"Chinni Murali Krishna","lead":"On Site","domain":"Embedded - Validation","designation":"Pre/ Post silicon validation Engineer","yoe":null,"level":null,"role":"Engineer"},{"id":"VCC_114","name":"Chintala Keerthi Pratap","lead":"Srikanth","domain":"Staffing","designation":"Staffing","yoe":null,"level":null,"role":"Support"},{"id":"VC_224","name":"Chintha Vivek Sai","lead":"Rajesh","domain":"Hardware","designation":"Engineer I","yoe":0.83,"level":"L0","role":"Engineer"},{"id":"VC_189","name":"Chittimadha Anil","lead":"Aravind","domain":"DV","designation":"Engineer I","yoe":1.33,"level":"L1","role":"Engineer"},{"id":"VC_103","name":"Deepika Vandana","lead":"Sudha","domain":"Embedded - S/W","designation":"Engineer I","yoe":2.92,"level":"L1","role":"Engineer"},{"id":"VCC_103","name":"Duragasi Venkatesh","lead":"Srikanth","domain":"Physical Design","designation":"Senior Engineer","yoe":null,"level":null,"role":"Senior Engineer"},{"id":"VC_225","name":"G Sudarshan Reddy","lead":"Aravind","domain":"SystemC Modelling","designation":"Engineer I","yoe":0.83,"level":"L0","role":"Engineer"},{"id":"VC_124","name":"Galipothu.Sunil Kumar","lead":"Rajesh","domain":"Hardware","designation":"Senior Staff Engineer","yoe":18.0,"level":"L5","role":"Staff Engineer"},{"id":"VC_167","name":"Geetha Mounika V","lead":"Teja","domain":"Embedded - S/W","designation":"Engineer I","yoe":2.17,"level":"L1","role":"Engineer"},{"id":"VC_231","name":"Gonthina Lakshmana Swami","lead":"George","domain":"Application Software","designation":"Engineer I","yoe":0.11,"level":"L0","role":"Engineer"},{"id":"VC_206","name":"Gorli Poorna Lakshmi Praneeth","lead":"Kameswara rao","domain":"Embedded - S/W","designation":"Engineer I","yoe":1.0,"level":"L1","role":"Engineer"},{"id":"VC_138","name":"Gunupuru Pavan Kalyan","lead":"Shyam","domain":"Embedded - Linux","designation":"Senior Engineer","yoe":4.42,"level":"L2","role":"Senior Engineer"},{"id":"VC_107","name":"Hardik","lead":"Shyam","domain":"Embedded - S/W","designation":"Consultant","yoe":null,"level":null,"role":"Consultant"},{"id":"VC_171","name":"Hari Chandana K","lead":"Teja","domain":"Embedded - S/W","designation":"Engineer I","yoe":2.17,"level":"L1","role":"Engineer"},{"id":"VC_149","name":"Haridasu Rudra Bhupathi Naidu","lead":"Srikanth","domain":"DV","designation":"Engineer II","yoe":2.17,"level":"L1","role":"Engineer"},{"id":"VC_200","name":"Harika Kunduru","lead":"Rajesh","domain":"Hardware","designation":"Engineer II","yoe":4.0,"level":"L2","role":"Engineer"},{"id":"VC_129","name":"Hemanth Aare","lead":"Kameswara rao","domain":"Embedded - Validation","designation":"Engineer I","yoe":2.4,"level":"L1","role":"Engineer"},{"id":"VC_246","name":"Immadisetty Srilekha","lead":"Sudha","domain":"Application Software","designation":"Trainee II","yoe":0.25,"level":"L0","role":"Trainee"},{"id":"VC_186","name":"Inampudi Phani Kumar","lead":"Shyam","domain":"Embedded - Linux","designation":"Engineer I","yoe":1.42,"level":"L1","role":"Engineer"},{"id":"VC_136","name":"Itla Sai Bharadwaj","lead":"Srikanth","domain":"FPGA","designation":"Senior Engineer","yoe":4.33,"level":"L2","role":"Senior Engineer"},{"id":"VC_241","name":"Jagadguru Peyyala","lead":"Srikanth","domain":"Product Management","designation":"Product Manager","yoe":4.0,"level":"L2","role":"Product Manager"},{"id":"VC_176","name":"Jampani Samudralankaiah","lead":"Rajesh","domain":"Hardware","designation":"Senior Engineer","yoe":6.33,"level":"L3","role":"Senior Engineer"},{"id":"VCIN_43","name":"Jayadev Lokanadham","lead":"Rajesh","domain":"Hardware","designation":"Intern I","yoe":null,"level":null,"role":"Intern"},{"id":"VC_125","name":"Jithendran Ponnusamy","lead":"Sasikanth","domain":"Embedded - Validation","designation":"Senior Engineer","yoe":4.33,"level":"L2","role":"Senior Engineer"},{"id":"VC_130","name":"Kamasani Poorna","lead":"Sasikanth","domain":"Embedded - Validation","designation":"Engineer II","yoe":2.42,"level":"L1","role":"Engineer"},{"id":"VC_215","name":"Kameswara rao Dasari","lead":"Srikanth","domain":"Embedded - Validation","designation":"Senior Staff Engineer","yoe":11.0,"level":"L5","role":"Staff Engineer"},{"id":"VC_181","name":"Kantipudi Sri Sai Kiran","lead":"Teja","domain":"Embedded - S/W","designation":"Engineer I","yoe":1.42,"level":"L1","role":"Engineer"},{"id":"VC_226","name":"Kanturi Jeevan Sai","lead":"Aravind","domain":"SystemC Modelling","designation":"Engineer I","yoe":0.83,"level":"L0","role":"Engineer"},{"id":"VC_237","name":"Katta Pavan Kumar Reddy","lead":"Venkata Kiran","domain":"Admin & Operationss Executive","designation":"Admin & Operationss Executive","yoe":null,"level":null,"role":"Support"},{"id":"VC_196","name":"Keerthi Sepana","lead":"Rajesh","domain":"Hardware","designation":"Associate Engineer","yoe":1.25,"level":"L1","role":"Engineer"},{"id":"VC_199","name":"Keerthi Teleti","lead":"Srikanth","domain":"Accountant","designation":"Accountant","yoe":null,"level":null,"role":"Support"},{"id":"VC_214","name":"Kiran Allada","lead":"Teja","domain":"Embedded - Linux","designation":"Senior Engineer","yoe":5.67,"level":"L3","role":"Senior Engineer"},{"id":"VC_242","name":"Kiranmai Battu","lead":"George","domain":"Application Software","designation":"Trainee III","yoe":0.42,"level":"L0","role":"Trainee"},{"id":"VC_243","name":"Kolapalli Vyshnavi Sai","lead":"Kameswara rao","domain":"Embedded - S/W","designation":"Engineer I","yoe":3.33,"level":"L2","role":"Engineer"},{"id":"VC_228","name":"Kona Sri Devi","lead":"Srikanth","domain":"DV","designation":"Engineer I","yoe":0.75,"level":"L0","role":"Engineer"},{"id":"VCC_100","name":"Koppurothu Subash","lead":"Srikanth","domain":"Physical Design","designation":"Senior Engineer","yoe":null,"level":null,"role":"Senior Engineer"},{"id":"VC_218","name":"Kota Poojitha","lead":"Aravind","domain":"SystemC Modelling","designation":"Engineer I","yoe":1.0,"level":"L1","role":"Engineer"},{"id":"VC_172","name":"Kranthi Chaitanya Udarakonda","lead":"Srikanth","domain":"Senior Sales Manager","designation":"Senior Sales Manager","yoe":null,"level":null,"role":"Support"},{"id":"VC_155","name":"LingaSwamy Shyaga","lead":"Shyam","domain":"Embedded - Validation","designation":"Senior Engineer","yoe":8.0,"level":"L4","role":"Senior Engineer"},{"id":"VC_179","name":"Maganti Raviteja","lead":"Shyam","domain":"Embedded - Validation","designation":"Engineer I","yoe":1.42,"level":"L1","role":"Engineer"},{"id":"VC_133","name":"Mahammad Vaheed Pasha","lead":"Srikanth","domain":"FPGA","designation":"Engineer II","yoe":2.3,"level":"L1","role":"Engineer"},{"id":"VC_233","name":"Mahmad Ameerullah","lead":"Teja","domain":"Application Software","designation":"Engineer I","yoe":0.92,"level":"L0","role":"Engineer"},{"id":"VC_150","name":"Mani Gopi Nalajala","lead":"Srikanth","domain":"DV","designation":"Engineer II","yoe":2.17,"level":"L1","role":"Engineer"},{"id":"VCC_04","name":"Maschyaraj Sreekar Bhargav","lead":"On Site","domain":"Not specified","designation":"Embedded Engineer","yoe":4.58,"level":"L2","role":"Engineer"},{"id":"VCIN_47","name":"Menuga Sai Swetha Sri","lead":"Shyam","domain":"Embedded - Linux","designation":"Intern II","yoe":null,"level":null,"role":"Intern"},{"id":"VC_216","name":"Mounika Annepu","lead":"Srikanth","domain":"Marketing Specialist","designation":"Marketing Specialist","yoe":null,"level":null,"role":"Support"},{"id":"VC_220","name":"Mudragada Sri Venkata Ram Pavan","lead":"Srikanth","domain":"DV","designation":"Engineer I","yoe":1.0,"level":"L1","role":"Engineer"},{"id":"VC_213","name":"Mutakoduru Sowmya","lead":"Aravind","domain":"SystemC Modelling","designation":"Engineer I","yoe":0.75,"level":"L0","role":"Engineer"},{"id":"VC_239","name":"Narendra Reddy Nagireddy","lead":"Mounika","domain":"Marketing Executive","designation":"Marketing Executive","yoe":null,"level":null,"role":"Support"},{"id":"VCIN_26","name":"Naveen","lead":"Rajesh","domain":"Hardware","designation":"Consultant","yoe":null,"level":null,"role":"Consultant"},{"id":"VC_209","name":"Naveen Namburi","lead":"Sasikanth","domain":"Embedded - Linux","designation":"Senior Engineer","yoe":6.92,"level":"L3","role":"Senior Engineer"},{"id":"VC_118","name":"Panchangam. Sai Vinodh","lead":"Teja","domain":"Embedded - S/W","designation":"Engineer II","yoe":2.5,"level":"L1","role":"Engineer"},{"id":"VC_170","name":"Pavani D S","lead":"Sasikanth","domain":"Embedded - S/W","designation":"Engineer I","yoe":2.17,"level":"L1","role":"Engineer"},{"id":"VCC_03","name":"Poorvasan Murugan","lead":"On Site","domain":"Not specified","designation":"Validation Engineer","yoe":null,"level":null,"role":"Engineer"},{"id":"VC_190","name":"Pothula Bhargav Sai","lead":"Aravind","domain":"DV","designation":"Engineer I","yoe":1.33,"level":"L1","role":"Engineer"},{"id":"VC_245","name":"Pothuraju Radhika","lead":"Srikanth","domain":"Strategy and Operationss Trainee","designation":"Strategy and Operationss Trainee","yoe":null,"level":null,"role":"Trainee"},{"id":"VC_112","name":"Prithvi Nagilla","lead":"Shyam","domain":"Program Manager","designation":"Program Manager","yoe":14.0,"level":"L5","role":"Program Manager"},{"id":"VCIN_50","name":"Priya Kalaga","lead":"Sudha","domain":"HR","designation":"HR","yoe":null,"level":null,"role":"Support"},{"id":"VC_198","name":"Pujitha Uttharkar","lead":"Teja","domain":"Embedded - S/W","designation":"Engineer II","yoe":3.17,"level":"L2","role":"Engineer"},{"id":"VC_141","name":"Ravada Ramesh","lead":"Rajesh","domain":"Hardware","designation":"Engineer II","yoe":4.17,"level":"L2","role":"Engineer"},{"id":"VC_188","name":"Rayidi Luhitha","lead":"Aravind","domain":"DV","designation":"Engineer I","yoe":1.33,"level":"L1","role":"Engineer"},{"id":"VC_234","name":"Roopini Gorle","lead":"Sudha","domain":"Application Software","designation":"Software Trainee II","yoe":0.67,"level":"L0","role":"Trainee"},{"id":"VC_163","name":"Ruka Nandi Vardhan Reddy","lead":"Rajesh","domain":"Hardware","designation":"Engineer I","yoe":2.58,"level":"L1","role":"Engineer"},{"id":"VC_207","name":"Rupaji Rithika","lead":"Kameswara rao","domain":"Embedded - Validation","designation":"Engineer I","yoe":1.0,"level":"L1","role":"Engineer"},{"id":"VC_120","name":"S Noor Mahammad","lead":"Teja","domain":"Embedded - S/W","designation":"Engineer II","yoe":2.5,"level":"L1","role":"Engineer"},{"id":"VC_219","name":"S Vishnu Vardhan Reddy","lead":"Shyam","domain":"Embedded - Linux","designation":"Engineer I","yoe":1.0,"level":"L1","role":"Engineer"},{"id":"VC_180","name":"Saahith Chandra Geela","lead":"Kameswara rao","domain":"Embedded - Validation","designation":"Engineer I","yoe":1.42,"level":"L1","role":"Engineer"},{"id":"VC_236","name":"Saheram Kurra","lead":"Kranthi","domain":"Sales Trainee","designation":"Sales Trainee","yoe":null,"level":null,"role":"Trainee"},{"id":"VC_166","name":"Sai Gandhi A","lead":"Kameswara rao","domain":"Embedded - Validation","designation":"Engineer I","yoe":2.17,"level":"L1","role":"Engineer"},{"id":"VC_100","name":"Sai Sudha Kilaru","lead":"Srikanth","domain":"HR","designation":"HR","yoe":null,"level":null,"role":"Support"},{"id":"VC_108","name":"Sai Swetha Devi Vana","lead":"Sudha","domain":"HR","designation":"HR","yoe":null,"level":null,"role":"Support"},{"id":"VC_184","name":"Sanaka Venkata Karthikeya","lead":"Shyam","domain":"Embedded - Validation","designation":"Engineer I","yoe":1.42,"level":"L1","role":"Engineer"},{"id":"VC_113","name":"SasiKanth Golla","lead":"Srikanth","domain":"Embedded - Validation","designation":"Senior Staff Engineer","yoe":14.0,"level":"L5","role":"Staff Engineer"},{"id":"VCC_102","name":"Shinagam Chanti","lead":"Srikanth","domain":"Physical Design","designation":"Senior Engineer","yoe":null,"level":null,"role":"Senior Engineer"},{"id":"VC_110","name":"Shyam Kumar Thella","lead":"Srikanth","domain":"Embedded - Linux","designation":"Senior Staff Engineer","yoe":11.0,"level":"L5","role":"Staff Engineer"},{"id":"VC_182","name":"Singireddi Mohan Rao","lead":"Kameswara rao","domain":"Embedded - Validation","designation":"Engineer I","yoe":1.42,"level":"L1","role":"Engineer"},{"id":"VC_191","name":"Sollapuram Kishore Reddy","lead":"Aravind","domain":"SystemC Modelling","designation":"Engineer I","yoe":1.33,"level":"L1","role":"Engineer"},{"id":"VC_126","name":"Sreekanth. Arati","lead":"Srikanth","domain":"FPGA","designation":"Senior Engineer","yoe":5.67,"level":"L3","role":"Senior Engineer"},{"id":"VC_106","name":"SriTeja Allani","lead":"Srikanth","domain":"Embedded - S/W","designation":"Staff Engineer","yoe":7.0,"level":"L4","role":"Staff Engineer"},{"id":"VC_248","name":"Sridhar Akula","lead":"Kameswara rao","domain":"Embedded - S/W","designation":"Trainee II","yoe":0.17,"level":"L0","role":"Trainee"},{"id":"VC_099","name":"Srikanth Neelam","lead":"","domain":"Not specified","designation":"Director","yoe":24.0,"level":"L5","role":"Director"},{"id":"VC_160","name":"Srinivasa Rao Baratam","lead":"Srikanth","domain":"Senior System Administrator","designation":"Senior System Administrator","yoe":null,"level":null,"role":"Support"},{"id":"VC_101","name":"Srinivasa Rao Supuri","lead":"Rajesh","domain":"Hardware","designation":"Senior Engineer","yoe":14.0,"level":"L5","role":"Senior Engineer"},{"id":"VC_159","name":"Sriram Ungatla","lead":"Sudha","domain":"Application Software","designation":"Application Software","yoe":2.33,"level":"L1","role":"Support"},{"id":"VC_162","name":"Subramanyam G","lead":"Shyam","domain":"Embedded - S/W","designation":"Engineer I","yoe":2.17,"level":"L1","role":"Engineer"},{"id":"VC_192","name":"Sudeep B Channalli","lead":"Aravind","domain":"SystemC Modelling","designation":"Engineer I","yoe":1.33,"level":"L1","role":"Engineer"},{"id":"VC_240","name":"Sudheer Reddy","lead":"Srikanth","domain":"Embedded - S/W","designation":"Senior Engineer","yoe":2.17,"level":"L1","role":"Senior Engineer"},{"id":"VC_210","name":"Supriya Kallepelli","lead":"Srikanth","domain":"DV","designation":"Engineer II","yoe":4.33,"level":"L2","role":"Engineer"},{"id":"VC_109","name":"Swathi Kandukuri","lead":"Srikanth","domain":"Admin","designation":"Admin","yoe":null,"level":null,"role":"Support"},{"id":"VCC_02","name":"Syed Saleem Baba","lead":"On Site","domain":"Not specified","designation":"AI Engineer","yoe":null,"level":null,"role":"Engineer"},{"id":"VC_185","name":"T Harish","lead":"Kameswara rao","domain":"Embedded - S/W","designation":"Engineer I","yoe":1.33,"level":"L1","role":"Engineer"},{"id":"VC_193","name":"Tammana Viswanadha Muralidhar","lead":"Aravind","domain":"DV","designation":"Engineer I","yoe":1.33,"level":"L1","role":"Engineer"},{"id":"VC_131","name":"Tappeta Sai Lakshmi Geetha","lead":"Srikanth","domain":"Embedded - S/W","designation":"Engineer II","yoe":2.25,"level":"L1","role":"Engineer"},{"id":"VC_238","name":"Tejeswara Rao Padda","lead":"Srikanth","domain":"FPGA","designation":"Engineer I","yoe":2.33,"level":"L1","role":"Engineer"},{"id":"VC_230","name":"Thota Chaithra","lead":"Sudha","domain":"Application Software","designation":"Engineer I","yoe":0.92,"level":"L0","role":"Engineer"},{"id":"VC_132","name":"Ullangula Aparna","lead":"Kameswara rao","domain":"Embedded - S/W","designation":"Engineer II","yoe":2.25,"level":"L1","role":"Engineer"},{"id":"VC_222","name":"Undamatla Santhoshi Mani","lead":"Shyam","domain":"Embedded - S/W","designation":"Engineer I","yoe":1.0,"level":"L1","role":"Engineer"},{"id":"VC_114","name":"Vaishnavi. Vulapu","lead":"Sudha","domain":"HR","designation":"HR","yoe":null,"level":null,"role":"Support"},{"id":"VC_183","name":"Varimadla Anjaneyulu","lead":"Rajesh","domain":"Hardware","designation":"Engineer II","yoe":8.08,"level":"L4","role":"Engineer"},{"id":"VCC_01","name":"Veerabhadra Manikanta Sai Prem Tammana","lead":"On Site","domain":"Not specified","designation":"CAD Automation Engineer","yoe":null,"level":null,"role":"Engineer"},{"id":"VC_161","name":"Veeresh Meeniga","lead":"Rajesh","domain":"Hardware","designation":"Engineer I","yoe":2.58,"level":"L1","role":"Engineer"},{"id":"VC_205","name":"Veleparampil Limin","lead":"Shyam","domain":"Embedded - Linux","designation":"Engineer I","yoe":1.0,"level":"L1","role":"Engineer"},{"id":"VCC_112","name":"Venkata Kiran Venigalla","lead":"Srikanth","domain":"Program Manager","designation":"Consultant","yoe":21.0,"level":"L5","role":"Consultant"},{"id":"VCIN_63","name":"Vishnumolakula Roshini","lead":"Kameswara rao","domain":"Embedded - S/W","designation":"Intern II","yoe":null,"level":null,"role":"Intern"},{"id":"VC_165","name":"Yaswanth E","lead":"Sasikanth","domain":"Embedded - S/W","designation":"Engineer I","yoe":2.08,"level":"L1","role":"Engineer"},{"id":"VCC_101","name":"Yedla Suryaarjuna rao","lead":"Srikanth","domain":"Physical Design","designation":"Senior Engineer","yoe":null,"level":null,"role":"Senior Engineer"},{"id":"VC_194","name":"Yepuri Karthikeya","lead":"Aravind","domain":"SystemC Modelling","designation":"Engineer I","yoe":1.33,"level":"L1","role":"Engineer"},{"id":"VC_169","name":"Yeshasri. S","lead":"Sasikanth","domain":"Embedded - Validation","designation":"Engineer I","yoe":2.17,"level":"L1","role":"Engineer"},{"id":"VC_134","name":"Yeshwanth Namburi","lead":"Sasikanth","domain":"Embedded - Linux","designation":"Engineer II","yoe":2.25,"level":"L1","role":"Engineer"},{"id":"VCIN_51","name":"Yogeshwar Reddy Meda","lead":"Sudha","domain":"Application Software","designation":"Software Intern II","yoe":null,"level":null,"role":"Intern"}],"allocs":[{"emp":"VC_099","sector":"Services","project":"FLC","billed":"Billed","pct":100},{"emp":"VC_116","sector":"Services","project":"Renesas ISP","billed":"Billed","pct":100},{"emp":"VC_112","sector":"Services","project":"HCL","billed":"Buffer","pct":100},{"emp":"VC_104","sector":"Services","project":"SmartSoC ADI","billed":"Billed","pct":100},{"emp":"VC_191","sector":"Services","project":"SmartSoC ADI","billed":"Billed","pct":100},{"emp":"VC_218","sector":"Services","project":"SmartSoC ADI","billed":"Billed","pct":100},{"emp":"VC_192","sector":"Services","project":"SmartSoC ADI","billed":"Billed","pct":100},{"emp":"VC_194","sector":"Services","project":"FLC IP Modelling","billed":"Buffer Billed","pct":100},{"emp":"VC_225","sector":"Services","project":"FLC IP Modelling","billed":"Buffer Billed","pct":100},{"emp":"VC_226","sector":"Product Development","project":"HSM","billed":"UnBilled","pct":100},{"emp":"VC_213","sector":"Product Development","project":"HSM","billed":"UnBilled","pct":100},{"emp":"VC_217","sector":"Product Development","project":"HSM","billed":"UnBilled","pct":100},{"emp":"VC_126","sector":"Services","project":"Quest","billed":"Billed","pct":100},{"emp":"VC_136","sector":"Services","project":"FLC","billed":"Billed","pct":100},{"emp":"VC_238","sector":"Product Development","project":"HAL","billed":"Buffer","pct":100},{"emp":"VC_227","sector":"Product Development","project":"HAL","billed":"Buffer","pct":100},{"emp":"VC_149","sector":"Services","project":"ORCA","billed":"UnBilled","pct":100},{"emp":"VC_210","sector":"Services","project":"HCL","billed":"UnBilled","pct":100},{"emp":"VC_212","sector":"Services","project":"HCL","billed":"UnBilled","pct":100},{"emp":"VC_188","sector":"Need to Assign","project":"ERMAC","billed":"UnBilled","pct":100},{"emp":"VC_189","sector":"Need to Assign","project":"ERMAC","billed":"UnBilled","pct":100},{"emp":"VC_190","sector":"Need to Assign","project":"ERGMAC","billed":"UnBilled","pct":100},{"emp":"VC_193","sector":"Services","project":"HCL","billed":"UnBilled","pct":100},{"emp":"VC_220","sector":"Services","project":"ORCA","billed":"UnBilled","pct":100},{"emp":"VC_150","sector":"Services","project":"FLC","billed":"Billed","pct":100},{"emp":"VC_203","sector":"Need to Assign","project":"DV Ramp up","billed":"UnBilled","pct":100},{"emp":"VC_221","sector":"Product Development","project":"HAL","billed":"UnBilled","pct":100},{"emp":"VC_223","sector":"Need to Assign","project":"DLI SoC","billed":"UnBilled","pct":100},{"emp":"VC_228","sector":"Need to Assign","project":"DLI SoC","billed":"UnBilled","pct":100},{"emp":"VC_105","sector":"Product Development","project":"Edge","billed":"Billed","pct":100},{"emp":"VC_101","sector":"Services","project":"Unassigned","billed":"Billed","pct":50},{"emp":"VC_101","sector":"Need to Assign","project":"Unassigned","billed":"Billed","pct":50},{"emp":"VC_124","sector":"Product Development","project":"Edge","billed":"Billed","pct":100},{"emp":"VC_176","sector":"Product Development","project":"Edge","billed":"Billed","pct":100},{"emp":"VC_183","sector":"Operations","project":"Unassigned","billed":"Billed","pct":100},{"emp":"VC_224","sector":"Services","project":"Unassigned","billed":"Billed","pct":50},{"emp":"VC_224","sector":"Need to Assign","project":"Unassigned","billed":"Billed","pct":50},{"emp":"VC_161","sector":"Product Development","project":"HAL","billed":"Billed","pct":100},{"emp":"VC_141","sector":"Product Development","project":"Camera","billed":"Billed","pct":100},{"emp":"VC_163","sector":"Product Development","project":"LORA","billed":"Billed","pct":100},{"emp":"VC_196","sector":"Product Development","project":"LORA","billed":"Billed","pct":100},{"emp":"VC_200","sector":"Product Development","project":"Camera","billed":"Billed","pct":100},{"emp":"VC_229","sector":"Product Development","project":"Camera","billed":"Billed","pct":100},{"emp":"VCIN_43","sector":"Product Development","project":"LORA","billed":"Buffer","pct":100},{"emp":"VCIN_26","sector":"Product Development","project":"HAL","billed":"Buffer","pct":100},{"emp":"VC_119","sector":"Services","project":"Kandou","billed":"Billed","pct":100},{"emp":"VC_134","sector":"System Integration","project":"Unassigned","billed":"Buffer","pct":100},{"emp":"VC_138","sector":"Product Development","project":"Edge","billed":"Billed","pct":100},{"emp":"VC_209","sector":"Services","project":"Kandou","billed":"Billed","pct":100},{"emp":"VC_214","sector":"Services","project":"Gen5","billed":"Billed","pct":100},{"emp":"VC_186","sector":"Need to Assign","project":"Unassigned","billed":"UnBilled","pct":100},{"emp":"VC_187","sector":"Product Development","project":"Camera","billed":"Billed","pct":100},{"emp":"VC_219","sector":"Product Development","project":"Camera","billed":"Billed","pct":100},{"emp":"VC_205","sector":"Services","project":"Camera","billed":"Billed","pct":100},{"emp":"VCIN_47","sector":"Services","project":"Camera","billed":"Buffer","pct":100},{"emp":"VC_106","sector":"Services","project":"Gen5","billed":"Billed","pct":100},{"emp":"VC_107","sector":"Services","project":"Renesas NPU","billed":"Billed","pct":100},{"emp":"VC_103","sector":"Product Development","project":"Camera","billed":"Buffer","pct":50},{"emp":"VC_118","sector":"Need to Assign","project":"Renesas ISP","billed":"UnBilled","pct":100},{"emp":"VC_120","sector":"Need to Assign","project":"Renesas ISP","billed":"UnBilled","pct":100},{"emp":"VC_123","sector":"Need to Assign","project":"Linux Training","billed":"UnBilled","pct":100},{"emp":"VC_131","sector":"Need to Assign","project":"Linux Training","billed":"UnBilled","pct":100},{"emp":"VC_132","sector":"Services","project":"FLC","billed":"Billed","pct":100},{"emp":"VC_152","sector":"Services","project":"Gen5","billed":"Billed","pct":100},{"emp":"VC_162","sector":"System Integration","project":"Unassigned","billed":"Billed","pct":100},{"emp":"VC_165","sector":"System Integration","project":"Unassigned","billed":"Buffer","pct":100},{"emp":"VC_167","sector":"Services","project":"Gen5","billed":"Billed","pct":100},{"emp":"VC_168","sector":"Services","project":"Renesas FSP","billed":"Billed","pct":100},{"emp":"VC_170","sector":"Need to Assign","project":"Unassigned","billed":"Buffer","pct":100},{"emp":"VC_171","sector":"Services","project":"Gen5","billed":"Billed","pct":100},{"emp":"VC_198","sector":"Services","project":"Gen5","billed":"Billed","pct":100},{"emp":"VC_181","sector":"Services","project":"Renesas ISP","billed":"Buffer Billed","pct":100},{"emp":"VC_185","sector":"Services","project":"Renesas FSP","billed":"Buffer Billed","pct":100},{"emp":"VC_243","sector":"Need to Assign","project":"Training","billed":"UnBilled","pct":100},{"emp":"VC_206","sector":"Services","project":"Renesas FSP","billed":"Billed","pct":100},{"emp":"VC_222","sector":"Product Development","project":"Camera","billed":"Billed","pct":100},{"emp":"VC_247","sector":"Services","project":"Kandou","billed":"Billed","pct":100},{"emp":"VC_240","sector":"System Integration","project":"Renesas FSP","billed":"Billed","pct":100},{"emp":"VC_248","sector":"Services","project":"Renesas FSP","billed":"Buffer","pct":100},{"emp":"VCIN_63","sector":"Services","project":"Renesas FSP","billed":"Buffer","pct":100},{"emp":"VC_113","sector":"Services","project":"Kandou","billed":"Billed","pct":100},{"emp":"VC_125","sector":"Services","project":"Renesas","billed":"Billed","pct":100},{"emp":"VC_130","sector":"Services","project":"Kandou","billed":"Billed","pct":100},{"emp":"VC_164","sector":"Services","project":"Gen5","billed":"Billed","pct":100},{"emp":"VC_166","sector":"Services","project":"FLC","billed":"Billed","pct":100},{"emp":"VC_169","sector":"System Integration","project":"Unassigned","billed":"Buffer","pct":100},{"emp":"VC_215","sector":"Services","project":"Renesas FSP","billed":"Billed","pct":100},{"emp":"VC_178","sector":"Services","project":"Renesas NPU","billed":"Buffer Billed","pct":100},{"emp":"VC_179","sector":"Need to Assign","project":"Self Learning","billed":"UnBilled","pct":100},{"emp":"VC_180","sector":"Services","project":"FLC","billed":"Buffer","pct":100},{"emp":"VC_182","sector":"Services","project":"Renesas FSP","billed":"Billed","pct":100},{"emp":"VC_184","sector":"Product Development","project":"Camera","billed":"Buffer","pct":100},{"emp":"VC_208","sector":"Services","project":"Renesas FSP","billed":"Buffer Billed","pct":100},{"emp":"VC_207","sector":"Services","project":"Renesas FSP","billed":"Buffer Billed","pct":100},{"emp":"VC_233","sector":"Services","project":"Renesas ISP","billed":"Buffer Billed","pct":100},{"emp":"VC_230","sector":"Product Development","project":"HRMS","billed":"Buffer","pct":50},{"emp":"VC_234","sector":"Product Development","project":"HRMS","billed":"Buffer","pct":50},{"emp":"VC_242","sector":"Services","project":"ApexFlo","billed":"UnBilled","pct":100},{"emp":"VCIN_51","sector":"Product Development","project":"HRMS","billed":"Buffer","pct":50},{"emp":"VC_246","sector":"Product Development","project":"HRMS","billed":"Buffer","pct":50},{"emp":"VCIN_52","sector":"Product Development","project":"HRMS","billed":"Buffer","pct":50},{"emp":"VC_241","sector":"System Integration","project":"Unassigned","billed":"Buffer","pct":100},{"emp":"VC_159","sector":"Product Development","project":"HRMS","billed":"Buffer","pct":50},{"emp":"VCC_112","sector":"Product Development","project":"Edge","billed":"Buffer","pct":100},{"emp":"VCC_100","sector":"Services","project":"Unassigned","billed":"UnBilled","pct":100},{"emp":"VCC_101","sector":"Services","project":"Unassigned","billed":"UnBilled","pct":100},{"emp":"VCC_102","sector":"Services","project":"Unassigned","billed":"UnBilled","pct":100},{"emp":"VCC_103","sector":"Services","project":"Unassigned","billed":"UnBilled","pct":100},{"emp":"VCC_115","sector":"Services","project":"Quest Global","billed":"Billed","pct":100},{"emp":"VC_211","sector":"Services","project":"AMD","billed":"Billed","pct":100},{"emp":"VCC_01","sector":"Services","project":"AMD","billed":"Billed","pct":100},{"emp":"VCC_02","sector":"Services","project":"AMD","billed":"Billed","pct":100},{"emp":"VCC_03","sector":"Services","project":"AMD","billed":"Billed","pct":100},{"emp":"VCC_04","sector":"Services","project":"Quest Global","billed":"Billed","pct":100},{"emp":"VCIN_52","sector":"Operations","project":"Unassigned","billed":"Not set","pct":50},{"emp":"VCIN_51","sector":"Operations","project":"Unassigned","billed":"Not set","pct":50},{"emp":"VC_246","sector":"Operations","project":"Unassigned","billed":"Not set","pct":50},{"emp":"VC_234","sector":"Operations","project":"Unassigned","billed":"Not set","pct":50},{"emp":"VC_230","sector":"Operations","project":"Unassigned","billed":"Not set","pct":50},{"emp":"VC_159","sector":"Operations","project":"Unassigned","billed":"Not set","pct":50},{"emp":"VC_103","sector":"Operations","project":"Unassigned","billed":"Not set","pct":50},{"emp":"VC_100","sector":"Operations","project":"Unassigned","billed":"Not set","pct":100},{"emp":"VC_108","sector":"Operations","project":"Unassigned","billed":"Not set","pct":100},{"emp":"VC_114","sector":"Operations","project":"Unassigned","billed":"Not set","pct":100},{"emp":"VCIN_50","sector":"Operations","project":"Unassigned","billed":"Not set","pct":100},{"emp":"VC_109","sector":"Operations","project":"Unassigned","billed":"Not set","pct":100},{"emp":"VC_237","sector":"Operations","project":"Unassigned","billed":"Not set","pct":100},{"emp":"VC_245","sector":"Operations","project":"Unassigned","billed":"Not set","pct":100},{"emp":"VC_216","sector":"Operations","project":"Unassigned","billed":"Not set","pct":100},{"emp":"VC_239","sector":"Operations","project":"Unassigned","billed":"Not set","pct":100},{"emp":"VC_195","sector":"Operations","project":"Unassigned","billed":"Not set","pct":100},{"emp":"VC_199","sector":"Operations","project":"Unassigned","billed":"Not set","pct":100},{"emp":"VC_172","sector":"Operations","project":"Unassigned","billed":"Not set","pct":100},{"emp":"VC_236","sector":"Operations","project":"Unassigned","billed":"Not set","pct":100},{"emp":"VC_160","sector":"Operations","project":"Unassigned","billed":"Not set","pct":100},{"emp":"VCC_114","sector":"Operations","project":"Unassigned","billed":"Not set","pct":100},{"emp":"VC_158","sector":"Operations","project":"Unassigned","billed":"Not set","pct":100},{"emp":"VC_110","sector":"Services","project":"Renesas NPU","billed":"Billed","pct":100},{"emp":"VC_133","sector":"Product Development","project":"HSM","billed":"UnBilled","pct":100},{"emp":"VC_155","sector":"Services","project":"Renesas NPU","billed":"Billed","pct":100},{"emp":"VC_129","sector":"Services","project":"Renesas FSP","billed":"Buffer","pct":100},{"emp":"VC_231","sector":"Services","project":"ApexFlo","billed":"Buffer","pct":100},{"emp":"VC_177","sector":"Operations","project":"Unassigned","billed":"UnBilled","pct":100}],"levels":[{"id":"L0","min":0,"max":1,"note":"under 1 yr"},{"id":"L1","min":1,"max":3,"note":"1-3 yrs"},{"id":"L2","min":3,"max":5,"note":"3-5 yrs"},{"id":"L3","min":5,"max":7,"note":"5-7 yrs"},{"id":"L4","min":7,"max":10,"note":"7-10 yrs"},{"id":"L5","min":10,"max":999,"note":"10 yrs +"}],"letgo":9};
+const PEOPLE = DATA.people, ALLOCS = DATA.allocs, LEVELS = DATA.levels;
+const SECTORS = [
+  {id:"services", name:"Services",            owns:"Client owns the result. We supply people and hours."},
+  {id:"si",       name:"System Integration",  owns:"Client owns the result. We combine existing parts."},
+  {id:"mfg",      name:"Manufacturing",       owns:"We build to a fixed design and sell as-is."},
+  {id:"pd",       name:"Product Development", owns:"We own the design, plan, price and customer."},
+  {id:"innov",    name:"Innovation",          owns:"We own it, but there is no paying customer yet."},
+  {id:"ops",      name:"Operations",          owns:"Internal. It exists to support everyone else."}
+];
+const SECNAME={services:"Services",si:"System Integration",mfg:"Manufacturing",
+  pd:"Product Development",innov:"Innovation",ops:"Operations",assign:"Need to Assign"};
+const SECID=Object.fromEntries(Object.entries(SECNAME).map(([k,v])=>[v,k]));
+
+const ROLES=["Director","Program Manager","Product Manager","Staff Engineer","Senior Engineer",
+             "Engineer","Trainee","Intern","Consultant","Support"];
+const BS=[{k:"Billed",c:"var(--billed)",t:"Billed"},
+          {k:"Buffer Billed",c:"var(--bbilled)",t:"Buffer billed"},
+          {k:"Buffer",c:"var(--buffer)",t:"Buffer"},
+          {k:"UnBilled",c:"var(--unbilled)",t:"Unbilled"}];
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const PMAP=Object.fromEntries(PEOPLE.map(p=>[p.id,p]));
+const aFor=sid=>ALLOCS.filter(a=>SECID[a.sector]===sid);
+const fte=as=>as.reduce((s,a)=>s+a.pct,0)/100;
+const heads=as=>new Set(as.map(a=>a.emp)).size;
+const earning=as=>as.filter(a=>a.billed==="Billed"||a.billed==="Buffer Billed").length;
+const splitIds=(()=>{const c={};ALLOCS.forEach(a=>c[a.emp]=(c[a.emp]||0)+1);
+  return Object.keys(c).filter(k=>c[k]>1);})();
+let state;
+
+function bar(as){const t=as.length||1;
+  return `<div class="bar">${BS.map(b=>{const n=as.filter(a=>a.billed===b.k).length;
+    return n?`<i style="width:${n/t*100}%;background:${b.c}"></i>`:"";}).join("")}</div>`;}
+function key(as){return `<div class="key">${BS.map(b=>{const n=as.filter(a=>a.billed===b.k).length;
+    return n?`<div><i style="background:${b.c}"></i>${b.t}<b class="num">${n}</b></div>`:"";}).join("")}</div>`;}
+
+function donut(as){
+  const t=as.length,R=52,C=2*Math.PI*R;let off=0;
+  const segs=BS.map(b=>{const n=as.filter(a=>a.billed===b.k).length;if(!n)return"";
+    const len=n/t*C,s=`<circle cx="60" cy="60" r="${R}" fill="none" stroke="${b.c}" stroke-width="16"
+      stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}"
+      transform="rotate(-90 60 60)"></circle>`;off+=len;return s;}).join("");
+  const pct=Math.round(earning(as)/t*100);
+  return `<div class="donut"><svg viewBox="0 0 120 120" width="148" height="148" role="img"
+    aria-label="${pct} percent of allocations earning">
+    ${segs}<text x="60" y="58" text-anchor="middle" class="num" font-size="25" font-weight="500" fill="#15181C">${pct}%</text>
+    <text x="60" y="74" text-anchor="middle" font-size="10" fill="#6E747D">earning</text></svg>
+    ${key(as)}</div>`;
+}
+
+function heat(n,max){
+  if(!n) return 'class="z"';
+  const o=(0.10+0.62*(n/max)).toFixed(2);
+  return `style="background:rgba(47,58,99,${o});color:${n/max>0.45?'#fff':'#15181C'};font-weight:500"`;
+}
+
+function roleMatrix(as,title,sub){
+  const projs=[...new Set(as.map(a=>a.project))]
+    .sort((x,y)=>as.filter(a=>a.project===y).length-as.filter(a=>a.project===x).length);
+  const roles=ROLES.filter(r=>as.some(a=>PMAP[a.emp].role===r));
+  if(!projs.length||!roles.length) return "";
+  let max=1;
+  roles.forEach(r=>projs.forEach(p=>{const n=as.filter(a=>a.project===p&&PMAP[a.emp].role===r).length;if(n>max)max=n;}));
+  const body=roles.map(r=>`<tr><th class="rh">${esc(r)}</th>${projs.map(p=>{
+      const n=as.filter(a=>a.project===p&&PMAP[a.emp].role===r).length;
+      return `<td ${heat(n,max)}>${n||"\u00b7"}</td>`;}).join("")}
+      <td class="num" style="font-weight:600">${as.filter(a=>PMAP[a.emp].role===r).length}</td></tr>`).join("");
+  return `<h3>${esc(title)}</h3><p class="sub">${esc(sub)}</p>
+  <div class="mwrap"><table class="mx">
+  <thead><tr><th class="rh">Role</th>${projs.map(p=>`<th>${esc(p)}</th>`).join("")}<th>All</th></tr></thead>
+  <tbody>${body}</tbody>
+  <tfoot><tr><th class="rh">Total</th>${projs.map(p=>
+    `<td class="num">${as.filter(a=>a.project===p).length}</td>`).join("")}
+    <td class="num">${as.length}</td></tr></tfoot></table></div>`;
+}
+
+/* ================= OVERVIEW ================= */
+function renderOverview(){
+  const ids=[...SECTORS.map(s=>s.id),"assign"];
+  const pct=Math.round(earning(ALLOCS)/ALLOCS.length*100);
+  const bench=heads(aFor("assign"));
+
+  const secBars=ids.map(id=>{const as=aFor(id);if(!as.length)return"";
+    const t=as.length;
+    return `<div class="hrow click" data-view="${id}">
+      <div class="hlab"><span>${esc(SECNAME[id])}</span>
+        <span>${heads(as)} people \u00b7 ${Math.round(earning(as)/t*100)}% earning</span></div>
+      <div class="htrack">${BS.map(b=>{const n=as.filter(a=>a.billed===b.k).length;
+        return n?`<i style="width:${n/t*100}%;background:${b.c}"></i>`:"";}).join("")}</div>
+    </div>`;}).join("");
+
+  const lv={};PEOPLE.forEach(p=>{const k=p.level||"none";lv[k]=(lv[k]||0)+1;});
+  const order=["L5","L4","L3","L2","L1","L0"];
+  const mx=Math.max(...order.map(k=>lv[k]||0));
+  const pyr=order.map(k=>{const n=lv[k]||0,m=LEVELS.find(l=>l.id===k);
+    return `<div class="pyrow"><span class="lv">${k}</span>
+      <span class="b" style="width:${Math.max(2,n/mx*58)}%"></span>
+      <span class="n num">${n}</span><span class="yr">${esc(m.note)}</span></div>`;}).join("")
+    + `<div class="pyrow"><span class="lv" style="color:var(--muted)">\u2014</span>
+      <span class="b" style="width:${Math.max(2,(lv.none||0)/mx*58)}%;background:var(--none);opacity:.5"></span>
+      <span class="n num">${lv.none||0}</span><span class="yr">no experience recorded</span></div>`;
+
+  const jr=(lv.L0||0)+(lv.L1||0), sr=(lv.L3||0)+(lv.L4||0);
+  const emptySec=[...SECTORS.map(s=>s.id)].filter(id=>!aFor(id).length).map(id=>SECNAME[id]);
+
+  return `<h2 class="view">Overview</h2>
+  <p class="lede">Where the company stands today, from the roster and the project register.</p>
+
+  <div class="stats">
+    <div class="stat"><div class="v num">${PEOPLE.length}</div><div class="l">People</div></div>
+    <div class="stat"><div class="v num">${ALLOCS.length}</div><div class="l">Allocations</div></div>
+    <div class="stat"><div class="v num" style="color:var(--billed)">${earning(ALLOCS)}</div><div class="l">Earning</div></div>
+    <div class="stat"><div class="v num" style="color:var(--unbilled)">${bench}</div><div class="l">Need to assign</div></div>
+  </div>
+
+  <div class="two">${donut(ALLOCS)}
+    <div class="hbars">${secBars}</div></div>
+
+  <h3>Experience pyramid</h3>
+  <p class="sub">Levels derived from years of experience.</p>
+  <div class="pyr">${pyr}</div>
+
+  <h3>What needs a decision</h3>
+  <div class="alerts"><div class="alert hot"><b>${bench} people are not earning</b>
+    <p>Unassigned, on bench or self-learning. At ${Math.round(bench/PEOPLE.length*100)}% of headcount this is the single largest cost lever you have.</p></div>
+  <div class="alert"><b>The pyramid is bottom heavy</b>
+    <p>${jr} people at L0\u2013L1 against ${sr} at L3\u2013L4. Not enough mid-level people to supervise the juniors.</p></div>
+  <div class="alert"><b>${emptySec.length} sectors have nobody in them</b>
+    <p>${emptySec.join(" and ")}. ${DATA.letgo} people marked Let Go are excluded from every number here.</p></div>
+  <div class="alert calm"><b>${splitIds.length} people are split across two projects</b>
+    <p>Which is why allocations (${ALLOCS.length}) exceed headcount (${PEOPLE.length}). Listed under Need to Assign.</p></div></div>
+
+  ${roleMatrix(ALLOCS.map(a=>({...a,project:a.sector})),"Roles across sectors",
+    "Company-wide shape. Darker means more people.")}
+
+  <div class="load">
+    <h3 style="margin:0 0 3px">Load data from the workbook</h3>
+    <p class="sub">Open <b>VCT_Operating_Model.xlsx</b>, go to the <b>Export to Dashboard</b> tab, copy column A from row 5 down, and paste it here. The whole dashboard rebuilds. Nothing is uploaded anywhere.</p>
+    <textarea id="paste" placeholder="VC_099|Srikanth Neelam|...|Billed|Service|FLC"></textarea>
+    <button id="loadbtn">Rebuild dashboard</button>
+    <span class="msg" id="loadmsg"></span>
+  </div>
+
+  <p class="note">Buffer billed means the person is working and paid for, but invoiced under another name through a staffing arrangement. It becomes billed once contracted directly.</p>`;
+}
+
+/* ================= SECTOR ================= */
+function renderSector(id){
+  const as=aFor(id),s=SECTORS.find(x=>x.id===id);
+  if(!as.length) return `<button class="back" data-view="overview">\u2190 Overview</button>
+    <h2 class="view">${esc(SECNAME[id])}</h2><p class="lede">${s?esc(s.owns):""}</p>
+    <div class="empty"><b>Nobody assigned here yet</b>${id==="mfg"
+      ?"RCI ITS sits on the project register with 5 slots, but no one in the roster is tagged to it."
+      :"No projects and no people mapped to this sector."}</div>`;
+  const byP={};as.forEach(a=>(byP[a.project]=byP[a.project]||[]).push(a));
+  const cards=Object.entries(byP).sort((a,b)=>b[1].length-a[1].length).map(([pn,pa])=>
+    `<button class="card" data-project="${encodeURIComponent(id+"|"+pn)}">
+      <div class="ctop"><span class="cname">${esc(pn)}</span><span class="ccount num">${pa.length}</span></div>
+      <div class="csub">${fte(pa).toFixed(1)} FTE \u00b7 ${Math.round(earning(pa)/pa.length*100)}% earning</div>
+      ${bar(pa)}</button>`).join("");
+  return `<button class="back" data-view="overview">\u2190 Overview</button>
+  <h2 class="view">${esc(SECNAME[id])}</h2>
+  <p class="lede">${s?esc(s.owns):"People with no paying work."}</p>
+  <div class="stats">
+    <div class="stat"><div class="v num">${heads(as)}</div><div class="l">People</div></div>
+    <div class="stat"><div class="v num">${fte(as).toFixed(1)}</div><div class="l">FTE</div></div>
+    <div class="stat"><div class="v num">${Object.keys(byP).length}</div><div class="l">Projects</div></div>
+    <div class="stat"><div class="v num" style="color:var(--billed)">${Math.round(earning(as)/as.length*100)}%</div><div class="l">Earning</div></div>
+  </div>
+  ${roleMatrix(as,"Roles \u00d7 projects","Who is on what, by role.")}
+  <h3>Projects</h3><p class="sub">Tap for the team.</p>${cards}`;
+}
+
+/* ================= PROJECT ================= */
+function renderProject(k){
+  const [sid,pn]=decodeURIComponent(k).split("|");
+  const as=aFor(sid).filter(a=>a.project===pn);
+  const byRole=ROLES.filter(r=>as.some(a=>PMAP[a.emp].role===r));
+  const blocks=byRole.map(r=>{
+    const rows=as.filter(a=>PMAP[a.emp].role===r).map(a=>{const p=PMAP[a.emp],b=BS.find(x=>x.k===a.billed);
+      return `<tr><td>${esc(p.name)}<div style="color:var(--muted);font-size:12px">${esc(p.designation)} \u00b7 ${esc(p.domain)}</div></td>
+        <td class="r">${p.level||"\u2014"}</td>
+        <td class="r"><span style="color:${b.c}">${esc(b.t)}</span></td></tr>`;}).join("");
+    return `<h3>${esc(r)} <span style="color:var(--muted);font-weight:400">\u00b7 ${as.filter(a=>PMAP[a.emp].role===r).length}</span></h3>
+      <table class="list">${rows}</table>`;}).join("");
+  return `<button class="back" data-view="${sid}">\u2190 ${esc(SECNAME[sid])}</button>
+  <h2 class="view">${esc(pn)}</h2>
+  <p class="lede">${esc(SECNAME[sid])}</p>
+  <div class="stats">
+    <div class="stat"><div class="v num">${as.length}</div><div class="l">On the team</div></div>
+    <div class="stat"><div class="v num">${fte(as).toFixed(1)}</div><div class="l">FTE</div></div>
+    <div class="stat"><div class="v num">${byRole.length}</div><div class="l">Roles</div></div>
+    <div class="stat"><div class="v num" style="color:var(--billed)">${Math.round(earning(as)/as.length*100)}%</div><div class="l">Earning</div></div>
+  </div>
+  ${donut(as)}
+  ${blocks}
+  <table class="list" style="margin-top:22px">
+    <tr><th>Project head</th><td class="r" style="color:var(--muted)">Person 1 (placeholder)</td></tr>
+    <tr><th>Start</th><td class="r" style="color:var(--muted)">01 Apr 2026 (temp)</td></tr>
+    <tr><th>End</th><td class="r" style="color:var(--muted)">31 Mar 2027 (temp)</td></tr></table>
+  <p class="note">Head and dates are placeholders. The roll-off alert stays off until real end dates are in.</p>`;
+}
+
+/* ================= NEED TO ASSIGN ================= */
+function renderAssign(){
+  const as=aFor("assign");
+  const byP={};as.forEach(a=>(byP[a.project]=byP[a.project]||[]).push(a));
+  const mx=Math.max(...Object.values(byP).map(v=>v.length));
+  const bars=Object.entries(byP).sort((a,b)=>b[1].length-a[1].length).map(([pn,pa])=>
+    `<div class="hrow click" data-project="${encodeURIComponent("assign|"+pn)}">
+      <div class="hlab"><span>${esc(pn)}</span><span>${pa.length}</span></div>
+      <div class="htrack"><i style="width:${pa.length/mx*100}%;background:var(--unbilled)"></i></div>
+    </div>`).join("");
+  const split=splitIds.map(id=>{const p=PMAP[id],m=ALLOCS.filter(a=>a.emp===id);
+    return `<tr><td>${esc(p.name)}<div style="color:var(--muted);font-size:12px">${esc(p.role)} \u00b7 ${p.level||"\u2014"}</div></td>
+      <td class="r" style="font-size:12.5px">${m.map(x=>esc(x.project)+" "+x.pct+"%").join("<br>")}</td></tr>`;}).join("");
+  return `<h2 class="view">Need to Assign</h2>
+  <p class="lede">People with no paying work \u2014 unassigned, on bench, or on self-learning. Self-learning counts as unbilled.</p>
+  <div class="stats">
+    <div class="stat"><div class="v num" style="color:var(--unbilled)">${heads(as)}</div><div class="l">People</div></div>
+    <div class="stat"><div class="v num">${Math.round(heads(as)/PEOPLE.length*100)}%</div><div class="l">Of headcount</div></div>
+    <div class="stat"><div class="v num">${Object.keys(byP).length}</div><div class="l">Buckets</div></div>
+    <div class="stat"><div class="v num">${splitIds.length}</div><div class="l">Split people</div></div>
+  </div>
+  <h3>Where they are parked</h3><p class="sub">Tap for names.</p>
+  <div class="hbars">${bars}</div>
+  ${roleMatrix(as,"Roles \u00d7 bucket","Which roles are idle, and where.")}
+  <h3>Split across two projects</h3>
+  <p class="sub">Counted in both sectors.</p>
+  <table class="list"><tr><th>Person</th><th class="r">Allocation</th></tr>${split}</table>`;
+}
+
+const VIEWS=[{id:"overview",label:"Overview"},...SECTORS.map(s=>({id:s.id,label:s.name})),
+  {id:"assign",label:"Need to Assign"}];
+state={view:"overview",project:null};
+function render(){
+  $("#rail").innerHTML=VIEWS.map(v=>
+    `<button data-view="${v.id}" aria-current="${state.project===null&&state.view===v.id}">${esc(v.label)}</button>`).join("");
+  $("#main").innerHTML = state.project!==null ? renderProject(state.project)
+    : state.view==="overview" ? renderOverview()
+    : state.view==="assign"   ? renderAssign()
+    : renderSector(state.view);
+  window.scrollTo(0,0);
+}
+function levelOf(y){ if(y===""||y===null||isNaN(y))return null;
+  y=+y; return y>=10?"L5":y>=7?"L4":y>=5?"L3":y>=3?"L2":y>=1?"L1":"L0"; }
+function roleOf(d){ const x=(d||"").toLowerCase();
+  for(const [k,v] of [["director","Director"],["program manager","Program Manager"],
+    ["product manager","Product Manager"],["intern","Intern"],["trainee","Trainee"],
+    ["consultant","Consultant"],["staff engineer","Staff Engineer"],["senior engineer","Senior Engineer"]])
+    if(x.includes(k)) return v;
+  return x.includes("engineer")?"Engineer":"Support"; }
+const SECMAP={"Service":"Services","Need to assign":"Need to Assign"};
+
+function reload(txt){
+  const lines=txt.split(/\r?\n/).map(s=>s.trim()).filter(s=>s && s.includes("|") && !s.startsWith("emp|"));
+  if(!lines.length) return {ok:false,msg:"Nothing recognised. Copy column A of the Export tab."};
+  const P={},A=[];
+  for(const L of lines){
+    const f=L.split("|");
+    if(f.length<9) continue;
+    const [emp,name,lead,domain,desig,yoe,billed,sector,project]=f;
+    if(!emp) continue;
+    if(!P[emp]) P[emp]={id:emp,name,lead,domain,designation:desig,
+      yoe:yoe===""?null:+yoe,level:levelOf(yoe),role:roleOf(desig)};
+    for(const s of sector.split(",").map(x=>x.trim()).filter(Boolean))
+      A.push({emp,sector:SECMAP[s]||s,project:project||"Unassigned",billed:billed||"Not set"});
+  }
+  if(!A.length) return {ok:false,msg:"No usable rows found."};
+  const c={};A.forEach(a=>c[a.emp]=(c[a.emp]||0)+1);
+  A.forEach(a=>a.pct=Math.round(100/c[a.emp]));
+  return {ok:true,people:Object.values(P).sort((x,y)=>x.name.localeCompare(y.name)),allocs:A,
+          msg:`Loaded ${Object.keys(P).length} people and ${A.length} allocations.`};
+}
+
+document.addEventListener("click",e=>{
+  if(e.target.id==="loadbtn"){
+    const r=reload(document.getElementById("paste").value);
+    const m=document.getElementById("loadmsg");
+    if(!r.ok){ m.textContent=r.msg; m.style.color="var(--unbilled)"; return; }
+    PEOPLE.length=0; PEOPLE.push(...r.people);
+    ALLOCS.length=0; ALLOCS.push(...r.allocs);
+    Object.keys(PMAP).forEach(k=>delete PMAP[k]);
+    PEOPLE.forEach(p=>PMAP[p.id]=p);
+    splitIds.length=0;
+    const cc={};ALLOCS.forEach(a=>cc[a.emp]=(cc[a.emp]||0)+1);
+    splitIds.push(...Object.keys(cc).filter(k=>cc[k]>1));
+    state={view:"overview",project:null}; render();
+    const m2=document.getElementById("loadmsg");
+    if(m2){ m2.textContent=r.msg; m2.style.color="var(--billed)"; }
+    return;
+  }
+  const b=e.target.closest("[data-project],[data-view]");
+  if(!b)return;
+  if(b.dataset.project!==undefined) state.project=b.dataset.project;
+  else {state.view=b.dataset.view;state.project=null;}
+  render();
+});
+render();
+</script>
+</body>
+</html>
