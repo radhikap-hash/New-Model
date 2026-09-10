@@ -591,7 +591,7 @@ function fetchLive(){
     try{
       if(d.error) throw new Error(d.error);
       applyData(d); LIVE=d.updated||new Date().toISOString();
-      state={view:"overview",project:null,person:null}; render();
+      state={view:"overview",project:null,person:null,people:null,kpiSector:"Services",kpiRole:"Project Lead",kpiEmp:""}; render();
       setStatus("Live from the sheet \u00b7 "+new Date(LIVE).toLocaleString(),"ok");
     }catch(err){ setStatus("Sheet returned an error: "+err.message,"warn"); }
     delete window[cb];
@@ -631,7 +631,7 @@ document.addEventListener("click",e=>{
     splitIds.length=0;
     const cc={};ALLOCS.forEach(a=>cc[a.emp]=(cc[a.emp]||0)+1);
     splitIds.push(...Object.keys(cc).filter(k=>cc[k]>1));
-    state={view:"overview",project:null,person:null}; render();
+    state={view:"overview",project:null,person:null,people:null,kpiSector:"Services",kpiRole:"Project Lead",kpiEmp:""}; render();
     const m2=document.getElementById("loadmsg");
     if(m2){ m2.textContent=r.msg; m2.style.color="var(--billed)"; }
     return;
