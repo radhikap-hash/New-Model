@@ -1,6 +1,7 @@
 /* Read-only visual workspace. No source data mutations or write requests. */
 (() => {
   const ui = {sectors:[], project:'', billing:'', month:'', employee:'', role:''};
+  let previousView='';
   const norm = value => String(value ?? '').trim().toLowerCase();
   const sectorName = a => SECNAME[SECID[a.sector]] || a.sector || 'Not assigned';
   const bill = a => String(a.billed || 'Not set');
@@ -18,6 +19,22 @@
   styles.textContent=`
     body{background:#f5f7fa}#main{max-width:1180px} .dw-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:20px 0}.dw-cube{background:#fff;border:1px solid #dce3ec;border-radius:12px;padding:19px;text-align:left;min-height:118px;display:flex;flex-direction:column;gap:12px;justify-content:space-between;color:inherit;font:inherit;cursor:pointer}.dw-cube[aria-pressed=true]{background:#edf2fa;border-color:#778ca9}.dw-cube strong{font-size:16px}.dw-sub{color:#617187;font-size:12px}.dw-dots{display:flex;gap:4px;flex-wrap:wrap}.dw-dots i,.dw-status i{width:10px;height:10px;border-radius:2px;display:inline-block}.dw-status{display:inline-flex;gap:7px;align-items:center;white-space:nowrap;font-size:12px}.dw-panel{background:#fff;border:1px solid #dce3ec;border-radius:12px;padding:22px;margin:18px 0}.dw-controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:16px 0}.dw-controls label{font-size:12px;color:#617187;display:grid;gap:5px}.dw-controls select,.dw-controls input{background:#fff;border:1px solid #dce3ec;padding:9px;border-radius:7px;color:#24354a;max-width:100%}.dw-table{overflow-x:auto}.dw-table table{width:100%;border-collapse:collapse;font-size:13px}.dw-table th,.dw-table td{padding:12px 9px;text-align:left;border-bottom:1px solid #e4e9ef;vertical-align:top}.dw-table th{color:#617187;font-weight:500;font-size:12px}.dw-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.dw-heading h3{margin:0}.dw-org-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}.dw-org-stat{background:#f6f8fb;border:1px solid #e0e6ee;border-radius:10px;padding:14px}.dw-org-stat strong{display:block;font-size:24px;margin-bottom:4px}.dw-org-map{display:grid;gap:18px}.dw-org-unit{border:1px solid #dce3ec;border-radius:12px;background:#f8fafc;overflow:hidden}.dw-org-unit>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 16px;background:#eef3f8;cursor:pointer;font-weight:600}.dw-org-unit>summary span{font-size:12px;color:#617187;font-weight:400}.dw-org-canvas{overflow-x:auto;padding:20px 14px 24px}.dw-org-branch{display:flex;flex-direction:column;align-items:center;min-width:180px;position:relative}.dw-org-children{display:flex;align-items:flex-start;justify-content:center;gap:16px;min-width:max-content;position:relative;padding-top:24px}.dw-org-children:before{content:'';position:absolute;top:0;left:50%;height:16px;border-left:2px solid #becbd9}.dw-org-children>.dw-org-branch:before{content:'';position:absolute;top:-8px;left:0;right:0;border-top:2px solid #becbd9}.dw-org-children>.dw-org-branch:first-child:before{left:50%}.dw-org-children>.dw-org-branch:last-child:before{right:50%}.dw-org-children>.dw-org-branch:only-child:before{left:50%;right:50%}.dw-org-roots{padding-top:0}.dw-org-roots:before,.dw-org-roots>.dw-org-branch:before{display:none}.dw-org-node{width:176px;min-height:112px;background:#fff;border:1px solid #d7e0e9;border-top:4px solid var(--bill,#929ca8);border-radius:10px;padding:12px;box-shadow:0 3px 10px rgba(31,50,73,.06);text-align:left}.dw-org-node.dw-org-lead{width:210px;background:#243f60;color:#fff;border-color:#243f60}.dw-org-node.dw-org-lead .dw-sub{color:#d4dfeb}.dw-org-person{display:flex;gap:9px;align-items:center;margin-bottom:9px}.dw-org-avatar{display:grid;place-items:center;width:34px;height:34px;flex:0 0 34px;border-radius:50%;background:#eaf0f6;color:#284866;font-weight:700;font-size:12px}.dw-org-lead .dw-org-avatar{background:#fff;color:#243f60}.dw-org-name{border:0;background:none;color:inherit;font:inherit;font-weight:650;text-align:left;padding:0;cursor:pointer}.dw-org-meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.dw-org-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 7px;border-radius:999px;background:#edf2f7;color:#52657a;font-size:10px}.dw-org-lead .dw-org-pill{background:rgba(255,255,255,.14);color:#fff}.dw-org-pill i{width:7px;height:7px;border-radius:50%}.dw-org-alert{border-top-color:#d58c30;background:#fffaf1}.dw-score{display:inline-block;background:#edf2f7;padding:4px 8px;border-radius:5px}.dw-history{display:flex;gap:10px;flex-wrap:wrap}.dw-history button{padding:12px;border:1px solid #dce3ec;background:#fff;border-radius:7px;cursor:pointer}.dw-note{padding:13px;background:#edf2f8;border-radius:8px;font-size:12px;margin:12px 0}.dw-overview{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.dw-overview strong{font-size:29px}.dw-projects{margin-top:20px}.dw-scope{display:flex;gap:10px;flex-wrap:wrap}.dw-scope label{display:flex;gap:5px;align-items:center}.dw-legend{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0}.dw-empty{padding:25px;color:#617187}@media(max-width:700px){.dw-panel{padding:12px}.dw-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dw-overview{gap:6px}.dw-cube{padding:13px;min-height:100px}.dw-org-summary{grid-template-columns:1fr}.dw-org-unit>summary{align-items:flex-start;flex-direction:column}.dw-org-canvas{padding:16px 8px 20px}.dw-org-node{width:158px}.dw-org-node.dw-org-lead{width:176px}.dw-org-children{gap:10px}}`;
   document.head.appendChild(styles);
+  styles.textContent+=`
+    .dw-chart{overflow:auto;max-height:75vh;border:1px solid #dce3ec;border-radius:10px;padding:24px;background:#fafbfd}
+    .dw-chart-columns{display:flex;align-items:flex-start;gap:32px;width:max-content}
+    .dw-chart-column{width:260px;flex:none}
+    .dw-chart .dw-org-branch{align-items:flex-start;min-width:0}
+    .dw-chart .dw-org-node,.dw-chart .dw-org-node.dw-org-lead{box-sizing:border-box;width:230px;min-height:0;padding:10px;border-radius:6px}
+    .dw-chart .dw-org-children{display:flex;flex-direction:column;gap:12px;margin-left:12px;padding:16px 0 0 17px;min-width:0;border-left:1px solid #9cabbc}
+    .dw-chart .dw-org-children:before{display:none}
+    .dw-chart .dw-org-children>.dw-org-branch:before{display:block;top:24px;left:-17px;right:auto;width:17px;border-top:1px solid #9cabbc}
+    .dw-chart .dw-org-children .dw-org-children{margin-left:0;padding-left:12px}
+    .dw-chart .dw-org-children .dw-org-children>.dw-org-branch:before{left:-12px;width:12px}
+    .dw-chart-column:has(.dw-org-children .dw-org-children){width:max-content}
+    .dw-chart-reference{width:230px;box-sizing:border-box;background:#fff2c5;border:1px solid #dbc888;border-radius:6px;padding:12px}
+    .dw-chart-reference strong{display:block;margin-bottom:4px}.dw-chart-count{margin:12px 0;font-size:12px;color:#617187}
+    .dw-org-name{overflow-wrap:anywhere}.dw-chart .dw-org-person{margin-bottom:0}.dw-chart .dw-org-meta{margin-top:6px}
+  `;
   VIEWS.splice(0,VIEWS.length,...[{id:'overview',label:'Overview'},{id:'sectors',label:'Sectors'},{id:'reporting',label:'Reporting structure'},{id:'available',label:'Available people'},{id:'kpi',label:'KPI reviews'}]);
 
   function sectorCubes(){
@@ -38,12 +55,13 @@
     return `<div class="dw-table"><table><thead><tr><th>Name / ID</th><th>Role</th><th>Experience (as recorded)</th><th>Billing</th><th>Skill</th><th>Recorded lead</th></tr></thead><tbody>${unique(as).map(p=>`<tr><td><button class="person-link" data-person="${esc(p.id)}">${esc(p.name)}</button><div class="dw-sub">${esc(p.id)}</div></td><td>${esc(p.designation||p.role||'Not recorded')}</td><td>${esc(p.yoe??'Not recorded')}</td><td>${[...new Set(as.filter(a=>a.emp===p.id).map(bill))].map(badge).join('<br>')}</td><td>${esc(p.domain||'Not recorded')}</td><td>${esc(p.lead||'Not recorded')}</td></tr>`).join('')}</tbody></table></div>${!as.length?'<div class="dw-empty">No people match these filters.</div>':''}`;
   }
   function reporting(as){
-    const members=unique(as), memberIds=new Set(members.map(p=>p.id)), names=new Map();
+    const members=(!ui.sectors.length&&!ui.project&&!ui.billing)?PEOPLE:unique(as), memberIds=new Set(members.map(p=>p.id)), names=new Map();
     const cleanName=value=>norm(value).replace(/[^a-z0-9]+/g,' ').trim();
     PEOPLE.forEach(p=>{const k=cleanName(p.name);names.set(k,[...(names.get(k)||[]),p]);});
     const resolveLead=value=>{
       const key=cleanName(value), exact=names.get(key)||[];
       if(exact.length===1)return exact[0];
+      if(exact.length>1)return null;
       const prefixes=key?PEOPLE.filter(p=>cleanName(p.name).startsWith(key+' ')):[];
       return prefixes.length===1?prefixes[0]:null;
     };
@@ -64,14 +82,14 @@
     };
     const seen=new Set();
     function branch(p,path=new Set()){
-      if(path.has(p.id))return `<div class="dw-org-branch">${personCard(p,false,true)}<div class="dw-sub">Reporting loop flagged</div></div>`;
+      if(path.has(p.id))return `<div class="dw-org-branch"><div class="dw-sub">Reporting loop flagged: ${esc(p.name)}</div></div>`;
       if(seen.has(p.id))return '';
       seen.add(p.id);const next=new Set(path);next.add(p.id);const kids=(groups.get(p.id)||[]).filter(x=>memberIds.has(x.id));
       return `<div class="dw-org-branch">${personCard(p,kids.length>0)}${kids.length?`<div class="dw-org-children">${kids.map(c=>branch(c,next)).join('')}</div>`:''}</div>`;
     }
     const rootGroups=new Map();
     for(const p of members)if(!memberIds.has(parentOf.get(p.id))){
-      const parentId=parentOf.get(p.id), key=parentId||'external:'+String(p.lead||'Top level');
+      const parentId=parentOf.get(p.id), key=parentId||'external:'+String(p.lead||'Lead not recorded');
       if(!rootGroups.has(key))rootGroups.set(key,[]);rootGroups.get(key).push(p);
     }
     function subtreeIds(p,path=new Set()){
@@ -84,12 +102,19 @@
       const parentId=key.startsWith('external:')?'':key, parent=parentId?PMAP[parentId]:null;
       const label=parent?.name||key.slice(9), ids=new Set();roots.forEach(root=>subtreeIds(root).forEach(id=>ids.add(id)));
       const trees=roots.map(root=>branch(root)).join('');
-      return `<details class="dw-org-unit" open><summary>${esc(label)}<span>${ids.size} ${ids.size===1?'person':'people'} shown</span></summary><div class="dw-org-canvas">${roots.length>1?`<div class="dw-org-children dw-org-roots">${trees}</div>`:trees}</div></details>`;
+      return `<div class="dw-chart-column"><div class="dw-chart-reference"><strong>${esc(label)}</strong><span class="dw-sub">${parent?'Lead outside selection · context only':label==='Lead not recorded'?'No reporting lead recorded':'Recorded lead · identity not matched'}</span></div><div class="dw-org-children">${trees}</div></div>`;
     }).join('');
     const left=members.filter(p=>!seen.has(p.id));
-    if(left.length)html+=`<details class="dw-org-unit" open><summary>Relationships needing review<span>${left.length} people</span></summary><div class="dw-org-canvas"><div class="dw-org-children">${left.map(p=>branch(p)).join('')}</div></div></details>`;
+    if(left.length)html+=`<div class="dw-chart-column"><div class="dw-chart-reference"><strong>Relationships needing review</strong><span class="dw-sub">Reporting loop — verify source</span></div><div class="dw-org-children">${left.map(p=>branch(p)).join('')}</div></div>`;
     const directLeads=members.filter(p=>(groups.get(p.id)||[]).some(c=>memberIds.has(c.id))).length;
-    return `<section class="dw-panel"><div class="dw-heading"><div><h3>Team reporting map</h3><p class="dw-sub">Read top to bottom: lead, then direct reports. Click any person for full details.</p></div><div class="dw-legend">${[...new Set(as.map(bill))].map(badge).join('')}</div></div><div class="dw-org-summary"><div class="dw-org-stat"><strong>${members.length}</strong><span class="dw-sub">People in this view</span></div><div class="dw-org-stat"><strong>${directLeads}</strong><span class="dw-sub">People with direct reports</span></div><div class="dw-org-stat"><strong>${unresolved.length}</strong><span class="dw-sub">Lead names needing review</span></div></div><div class="dw-org-map">${html||'<div class="dw-empty">No reporting data in this selection.</div>'}</div><p class="dw-sub" style="margin-top:16px">Connections use only the recorded Reports To field. An outside lead can appear as a team heading even when that person is outside the current sector or project filter.</p></section>`;
+    return `<section class="dw-panel"><div class="dw-heading"><div><h3>Organisation chart</h3><p class="dw-sub">Leads above, connected reports below. Click a name for details. Scroll the chart to see every team.</p></div><div class="dw-legend">${[...new Set(as.map(bill))].map(badge).join('')}</div></div><p class="dw-chart-count">${members.length} people · ${directLeads} people with direct reports · ${unresolved.length} unmatched lead records</p><div class="dw-chart" tabindex="0" role="region" aria-label="Organisation chart"><div class="dw-chart-columns">${html||'<div class="dw-empty">No reporting data in this selection.</div>'}</div></div><p class="dw-sub">Connections follow the recorded Reports To field. Yellow headings are context, not additional people in the selection. Missing or unmatched leads are labelled rather than guessed.</p></section>`;
+  }
+  function reportingFilters(){
+    const sectors=[...new Set([...SECTORS.map(s=>s.name),...ALLOCS.map(sectorName)])];
+    const allocations=ALLOCS.filter(a=>!ui.sectors.length||ui.sectors.includes(sectorName(a)));
+    const projects=[...new Set(allocations.map(a=>a.project).filter(Boolean))].sort();
+    const options=(values,current)=>values.map(v=>`<option value="${esc(v)}" ${current===v?'selected':''}>${esc(v)}</option>`).join('');
+    return `<div class="dw-heading"><h2 class="view">Reporting structure</h2><button class="back" data-dw-reset>Show everyone</button></div><div class="dw-controls"><label>Sector<select data-dw-report-sector><option value="">All sectors</option>${options(sectors,ui.sectors[0])}</select></label><label>Project<select data-dw-report-project><option value="">All projects</option>${options(projects,ui.project)}</select></label><label>Billing status<select data-dw-billing><option value="">All statuses</option>${options([...new Set(allocations.map(bill))].sort(),ui.billing)}</select></label></div>`;
   }
   function resultRows(p){return KPI_RESULTS.filter(r=>String(r.emp)===p.id&&ui.sectors.includes(r.sector)&&(!ui.project||r.project===ui.project)&&r.project&&r.role);}
   function scopedResults(){return KPI_RESULTS.filter(r=>ui.sectors.includes(r.sector)&&(!ui.project||r.project===ui.project));}
@@ -110,6 +135,7 @@
   function overview(){return `<h2 class="view">People overview</h2><p class="lede">Choose a sector, then a project, then a person.</p><div class="dw-overview"><div class="dw-cube"><strong>${PEOPLE.length}</strong>People</div><div class="dw-cube"><strong>${ALLOCS.length}</strong>Allocations</div><button class="dw-cube" data-view="available"><strong>${unique(ALLOCS.filter(a=>/^(unassigned|need to assign)$/i.test(a.project||'Unassigned')||a.sector==='Need to Assign')).length}</strong>Without a project</button></div>${sectorCubes()}`;}
   function workspace(){
     if(state.view==='overview')return overview();
+    if(state.view==='reporting')return reportingFilters()+reporting(selected());
     if(!ui.sectors.length)return `<h2 class="view">${esc(VIEWS.find(v=>v.id===state.view)?.label||'Sectors')}</h2><p class="sub">Choose a sector</p>${sectorCubes()}`;
     const as=selected();let body;
     if(state.view==='reporting')body=reporting(as);
@@ -119,6 +145,8 @@
     return scope()+(state.view==='available'?'':projects())+body;
   }
   render = function(){
+    if(state.view==='reporting'&&previousView!=='reporting'){ui.sectors=[];ui.project='';ui.billing='';}
+    previousView=state.view;
     // Compatibility with existing links, refresh and person-detail navigation.
     if(SECNAME[state.view]){ui.sectors=[SECNAME[state.view]];state.view='sectors';}
     if(state.view==='projects')state.view='sectors';if(state.view==='assign')state.view='available';
@@ -136,7 +164,9 @@
     render();
   });
   document.addEventListener('change',e=>{const el=e.target;
-    if(el.hasAttribute('data-dw-group')){ui.sectors=el.checked?[...new Set([...ui.sectors,el.dataset.dwGroup])]:ui.sectors.filter(s=>s!==el.dataset.dwGroup);ui.project='';ui.employee='';}
+    if(el.hasAttribute('data-dw-report-sector')){ui.sectors=el.value?[el.value]:[];ui.project='';ui.billing='';}
+    else if(el.hasAttribute('data-dw-report-project'))ui.project=el.value;
+    else if(el.hasAttribute('data-dw-group')){ui.sectors=el.checked?[...new Set([...ui.sectors,el.dataset.dwGroup])]:ui.sectors.filter(s=>s!==el.dataset.dwGroup);ui.project='';ui.employee='';}
     else if(el.hasAttribute('data-dw-billing')){ui.billing=el.value;ui.employee='';}
     else if(el.hasAttribute('data-dw-month'))ui.month=el.value;
     else if(el.hasAttribute('data-dw-role'))ui.role=el.value;
