@@ -32,6 +32,6 @@ change({dwGroup:'Services'},'',true);assert.match(output(),/Services/);
 // UI must not issue writes or persist reassignment into any sheet.
 const redesign=fs.readFileSync('dashboard.js','utf8');
 assert.doesNotMatch(redesign,/fetch\(|XMLHttpRequest|localStorage|\.send\(/);
-assert.match(html,/<script src="dashboard.js"><\/script>/);
+assert.match(html,/<script src="dashboard\.js\?v=20260916-reporting"><\/script>/);
 assert.match(fs.readFileSync('.github/workflows/deploy-pages.yml','utf8'),/cp dashboard.js site\/dashboard.js/);
 console.log('PASS: navigation, project lists, reporting, scoped KPI results, duplicate review handling, read-only UI and packaging');
