@@ -39,13 +39,19 @@
   }
   function reporting(as){
     const members=unique(as), memberIds=new Set(members.map(p=>p.id)), names=new Map();
-    PEOPLE.forEach(p=>{const k=norm(p.name);names.set(k,[...(names.get(k)||[]),p]);});
+    const cleanName=value=>norm(value).replace(/[^a-z0-9]+/g,' ').trim();
+    PEOPLE.forEach(p=>{const k=cleanName(p.name);names.set(k,[...(names.get(k)||[]),p]);});
+    const resolveLead=value=>{
+      const key=cleanName(value), exact=names.get(key)||[];
+      if(exact.length===1)return exact[0];
+      const prefixes=key?PEOPLE.filter(p=>cleanName(p.name).startsWith(key+' ')):[];
+      return prefixes.length===1?prefixes[0]:null;
+    };
     const groups=new Map(), parentOf=new Map(), unresolved=[];
     members.forEach(p=>{
-      const lead=String(p.lead||'').trim(), hits=names.get(norm(lead))||[];
-      const parent=hits.length===1?hits[0]:null;
+      const lead=String(p.lead||'').trim(), parent=resolveLead(lead);
       parentOf.set(p.id,parent?.id||'');
-      if(!parent&&lead&&hits.length!==1)unresolved.push(p);
+      if(!parent&&lead)unresolved.push(p);
       const key=parent?.id||'external:'+String(lead||'Lead not recorded');
       if(!groups.has(key))groups.set(key,[]);groups.get(key).push(p);
     });
