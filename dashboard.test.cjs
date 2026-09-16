@@ -18,7 +18,7 @@ click({dwSector:'Services'});assert.match(output(),/dw-projects/);
 const project=vm.runInContext('ALLOCS.find(a=>a.sector==="Services").project',ctx);
 click({dwProject:project});assert.match(output(),/Experience \(as recorded\)/);
 assert.doesNotMatch(output(),/Person 1 \(placeholder\)/);
-view('reporting');assert.match(output(),/Team reporting map/);assert.match(output(),/dw-org-summary/);assert.match(output(),/dw-org-node/);
+view('reporting');assert.match(output(),/Team reporting map/);assert.match(output(),/dw-org-summary/);assert.match(output(),/dw-org-node/);assert.match(output(),/People with direct reports/);
 view('kpi');assert.match(output(),/Team reviews/);
 const employee=vm.runInContext(`ALLOCS.find(a=>a.sector==='Services'&&a.project===${JSON.stringify(project)}).emp`,ctx);
 vm.runInContext(`KPI_RESULTS.push({emp:${JSON.stringify(employee)},sector:'Services',project:${JSON.stringify(project)},role:'Engineer 2',month:'2026-09',score:4,actual:[1,1,1,1,1]},{emp:${JSON.stringify(employee)},sector:'Services',project:'OTHER PROJECT',role:'Engineer 2',month:'2026-09',score:1});render()`,ctx);
