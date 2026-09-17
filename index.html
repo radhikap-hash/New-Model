@@ -16,29 +16,30 @@
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;
-  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
 .num{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
 
-header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--rule);padding:13px 24px 0}
-.hd{max-width:1280px;margin:0 auto}
-@media(max-width:600px){header.top{padding:12px 15px 0}}
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--rule);padding:14px 18px 0}
+.hd{width:100%;margin:0 auto}
+@media(max-width:600px){header.top{padding:12px 12px 0}}
 .brand{display:flex;align-items:baseline;gap:9px;margin-bottom:9px}
-.brand h1{font-size:18px;font-weight:600;margin:0;letter-spacing:-.01em}
-.brand span{font-size:12px;color:var(--muted)}
+.brand h1{font-size:21px;font-weight:600;margin:0;letter-spacing:-.01em}
+.brand span{font-size:13px;color:var(--muted)}
 nav.rail{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
 nav.rail::-webkit-scrollbar{display:none}
 nav.rail button{flex:0 0 auto;background:none;border:0;border-bottom:2px solid transparent;
-  padding:8px 10px 9px;font:inherit;font-size:13.5px;color:var(--muted);cursor:pointer;white-space:nowrap}
+  padding:9px 11px 10px;font:inherit;font-size:14.5px;color:var(--muted);cursor:pointer;white-space:nowrap}
 nav.rail button:hover{color:var(--ink)}
 nav.rail button[aria-current="true"]{color:var(--ink);font-weight:600;border-bottom-color:var(--sel)}
 nav.rail button:focus-visible{outline:2px solid var(--sel);outline-offset:-2px;border-radius:3px}
-main{padding:22px 24px 80px;max-width:1280px;margin:0 auto}
-@media(max-width:600px){main{padding:18px 15px 72px}}
+main{width:100%;padding:26px 18px 80px;margin:0 auto}
+@media(max-width:900px){main{padding:22px 16px 76px}}
+@media(max-width:600px){main{padding:18px 12px 72px}}
 
-h2.view{font-size:27px;font-weight:600;margin:0 0 3px;letter-spacing:-.018em}
-h3{font-size:16px;font-weight:600;margin:34px 0 4px;letter-spacing:-.005em}
-p.lede{color:var(--muted);font-size:14.5px;margin:0 0 20px;max-width:70ch}
-p.sub{color:var(--muted);font-size:12.5px;margin:0 0 10px}
+h2.view{font-size:32px;font-weight:600;margin:0 0 4px;letter-spacing:-.018em}
+h3{font-size:18px;font-weight:600;margin:36px 0 5px;letter-spacing:-.005em}
+p.lede{color:var(--muted);font-size:16px;margin:0 0 22px;max-width:76ch}
+p.sub{color:var(--muted);font-size:14px;margin:0 0 12px}
 
 /* headline stats */
 .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--rule);
@@ -87,18 +88,30 @@ p.sub{color:var(--muted);font-size:12.5px;margin:0 0 10px}
 .alert p{margin:0;font-size:12.5px;color:var(--muted)}
 
 /* cards */
-.card{background:var(--surface);border:1px solid var(--rule);border-radius:9px;padding:16px 17px;
-  margin-bottom:7px;width:100%;text-align:left;font:inherit;color:inherit;display:block;cursor:pointer}
-.card:hover{border-color:var(--rule2)}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:11px;padding:22px 20px;
+  min-height:134px;margin-bottom:9px;width:100%;text-align:left;font:inherit;color:inherit;display:flex;
+  flex-direction:column;justify-content:space-between;cursor:pointer;transition:border-color .15s ease,box-shadow .15s ease,transform .15s ease}
+.card:hover{border-color:var(--rule2);box-shadow:0 6px 18px rgba(21,24,28,.06);transform:translateY(-1px)}
 .card:focus-visible{outline:2px solid var(--sel);outline-offset:1px}
 .ctop{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
-.cname{font-weight:600;font-size:16px;letter-spacing:-.01em}
-.ccount{font-size:24px;font-weight:500}
-.csub{color:var(--muted);font-size:12.5px;margin-top:2px}
-.bar{display:flex;height:7px;border-radius:99px;overflow:hidden;background:#EDEDE8;margin-top:9px}
+.cname{font-weight:600;font-size:18px;line-height:1.3;letter-spacing:-.01em}
+.ccount{font-size:29px;font-weight:500;line-height:1}
+.csub{color:var(--muted);font-size:14px;margin-top:8px}
+.bar{display:flex;height:9px;border-radius:99px;overflow:hidden;background:#EDEDE8;margin-top:14px}
 .bar i{display:block;height:100%}
-@media(min-width:620px){.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.grid .card{margin-bottom:0}}
-@media(min-width:1000px){.grid{grid-template-columns:repeat(3,1fr)}}
+.grid{display:grid;grid-template-columns:1fr;gap:12px}
+.grid .card{margin-bottom:0}
+@media(min-width:620px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}}
+@media(min-width:900px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:1180px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:1700px){.grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}}
+@media(max-width:600px){
+  h2.view{font-size:27px}
+  h3{font-size:17px;margin-top:30px}
+  p.lede{font-size:15px}
+  .card{min-height:116px;padding:18px 16px}
+  .cname{font-size:17px}.ccount{font-size:26px}.csub{font-size:13px}
+}
 .alerts{display:grid;gap:8px}@media(min-width:900px){.alerts{grid-template-columns:1fr 1fr}}
 
 /* matrix */
@@ -438,7 +451,7 @@ function renderSector(id){
     <div class="stat"><div class="v num" style="color:var(--billed)">${Math.round(earning(as)/as.length*100)}%</div><div class="l">Earning</div></div>
   </div>
   ${id==="ops"?renderOperationsStructure(as):roleMatrix(as,"Roles \u00d7 projects","Who is on what, by role.")}
-  <h3>Projects</h3><p class="sub">Tap for the team.</p>${cards}`;
+  <h3>Projects</h3><p class="sub">Tap for the team.</p><div class="grid">${cards}</div>`;
 }
 
 /* ================= PROJECT ================= */
